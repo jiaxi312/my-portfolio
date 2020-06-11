@@ -5,9 +5,31 @@
   padding: 50px;
   margin: 20px;
   position: relative;
-  left:20%;
+  left: 20%;
 }
 
-#greeting-container {
-  margin-top: 20px;
+/* Create and customize a navigation bar at
+    the top of the webpage */
+.navigation {
+    width: 1000px;
+    overflow: hidden;
+    background-color: skyblue;
+    position: relative;
+    left: 15%;
+}
+
+.navigation a {
+    float: left;
+    display: block;
+    background-color: dodgerblue;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 130%;
+}
+
+.navigation a:hover {
+    background-color: #ddd;
+    color: black;
 }
