@@ -8,8 +8,21 @@
   left: 20%;
 }
 
-/* Create and customize a navigation bar at
-    the top of the webpage */
+/* Add a background to the top of the webpage */
+#topHeader {
+    width: 1000px;
+    height: 160px;
+    position: relative;
+    left: 15%;
+}
+
+/* Customize the background image */
+#topHeader img {
+    width: 1000px;
+    height: 160px;
+}
+
+/* Create and customize a navigation bar at the top of the webpage */
 .navigation {
     width: 1000px;
     overflow: hidden;
