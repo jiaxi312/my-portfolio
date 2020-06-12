@@ -1,4 +1,4 @@
-#content {
+.content {
   margin-left: auto;
   margin-right: auto;
   width: 650px;
@@ -44,5 +44,26 @@
 
 .navigation a:hover {
     background-color: #ddd;
-    color: black;
+}
+
+/* Upload and customize my selfie and my name*/
+#myName {
+    height: 50px;
+}
+
+/* Change the front and position of the text */
+#myName h1 {
+    font-size: 300%;
+    position: absolute;
+    left: 45%;
+    top: 50%;
+}
+
+/* Change the size and position of my selfie*/
+#myName img {
+    width: 210px;
+    height: 280px;
+    position: absolute;
+    left: 10%;
+    top: 0%;
 }
