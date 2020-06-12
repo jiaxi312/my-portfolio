@@ -8,6 +8,15 @@
   left: 20%;
 }
 
+/* Change behaviour of a hyperlink in the content box*/
+.content a:link, a:active {
+    color: blue;
+}
+
+.content a:visited, a:hover {
+    color: purple;
+}
+
 /* Add a background to the top of the webpage */
 #topHeader {
     width: 1000px;
@@ -61,9 +70,15 @@
 
 /* Change the size and position of my selfie*/
 #myName img {
-    width: 210px;
-    height: 280px;
+    width: 160px;
+    height: 200px;
     position: absolute;
     left: 10%;
-    top: 0%;
+    top: 10%;
+}
+
+/* Change the size and font size of my self-introduction*/
+#myIntro {
+    height: 250px;
+    font-size: 125%;
 }
