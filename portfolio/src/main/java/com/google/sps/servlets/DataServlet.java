@@ -24,11 +24,18 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello world!</h1>");
-    // The welcome message
-    response.getWriter().println("<h1>Hello, Jiaxi Chen!</h1>");
-  }
+    private int count = 0;
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;");
+        count++;
+        // empty line after the button
+        response.getWriter().println();
+        response.getWriter().println("Hello world!");
+        // The welcome message and show the data
+        response.getWriter().println("Hello, Jiaxi Chen!");
+        response.getWriter().println("You have been there " 
+                                        + count + " times!");
+    }
 }

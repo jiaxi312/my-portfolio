@@ -26,3 +26,13 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+/**
+ * Fetch a welcome message from the servlet, when clicked the button
+ */
+function showWelcomeMsg() {
+    // Using the arrow function modle to reduce the code
+    fetch('/data').then(response => response.text()).then((msg) => {
+        document.getElementById("welcomeMsg").innerText = msg;
+    });
+}
