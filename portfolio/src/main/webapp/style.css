@@ -82,3 +82,8 @@
     height: 250px;
     font-size: 125%;
 }
+
+/* Change the font size of the dataServlet box*/
+#dataServlet {
+    font-size: 150%;
+}
