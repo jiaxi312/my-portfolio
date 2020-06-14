@@ -87,3 +87,10 @@
 #dataServlet {
     font-size: 150%;
 }
+
+#dataServlet button {
+    width: 100px;
+    height: 50px;
+    font-size: 75%;
+    background-color: dodgerblue;
+}
