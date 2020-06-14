@@ -28,7 +28,7 @@ function addRandomGreeting() {
 }
 
 /**
- * Fetch a welcome message from the servlet, when clicked the button
+ * Fetches a welcome message from the servlet, when clickes the button
  */
 function showWelcomeMsg() {
     // Using the arrow function modle to reduce the code
