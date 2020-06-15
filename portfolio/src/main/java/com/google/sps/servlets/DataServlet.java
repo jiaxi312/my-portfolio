@@ -41,16 +41,16 @@ public class DataServlet extends HttpServlet {
      * @return a String containing the json format of the those information
      */
     private static String getInformationInJson() {
-        // creates an ArrayList containing three personal information
+        // create an ArrayList containing three personal information
         ArrayList<String> information = new ArrayList<>();
         information.add("Jiaxi Chen");
         information.add("Chongqing");
 
-        // gets the current time and adds to the list
+        // get the current time and adds to the list
         Date date = new Date();
         information.add(date.toString());
 
-        // converts it to json format and returns that json
+        // convert it to json format and returns that json
         Gson gson = new Gson();
         String json = gson.toJson(information);
         return json;

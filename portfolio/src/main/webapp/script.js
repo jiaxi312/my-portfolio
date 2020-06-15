@@ -42,7 +42,7 @@ function showWelcomeMsg() {
  */
 function showComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
-        // Displays the strings in the comments list, one string each line
+        // display the strings in the comments list, one string each line
         const commentsElement = document.getElementById('comments-container');
         console.log(comments);
         commentsElement.innerHTML = '';
