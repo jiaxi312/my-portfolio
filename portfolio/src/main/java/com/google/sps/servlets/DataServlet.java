@@ -19,6 +19,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import com.google.gson.Gson;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -26,19 +30,27 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;");
-        // empty line after the button
-        response.getWriter().println();
-        response.getWriter().println("Hello world!");
-        // The welcome message and show the data
-        response.getWriter().println("Hello, Jiaxi Chen!");
-        // Critical section, using sychronized to make sure mutual exclusion
-        synchronized(this) {
-            count++;
-            response.getWriter().println("You've visited this site " + count +
-                                            " times!");
-        }
+        String json = getInformationInJson();
+        response.setContentType("application/json");
+        response.getWriter().println(json);
     }
 
-    private int count = 0;
+    /**
+     * Creates an ArrayList containing three information, then converts it
+     * json.
+     * @return a String containing the json format of the those information
+     */
+    private static String getInformationInJson() {
+        // create an ArrayList containing three personal information
+        ArrayList<String> information = new ArrayList<>();
+        information.add("Jiaxi Chen");
+        information.add("Chongqing");
+
+        // get the current time and adds to the list
+        information.add(new Date().toString());
+
+        // convert it to json format and returns that json
+        String json = new Gson().toJson(information);
+        return json;
+    }
 }
