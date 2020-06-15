@@ -47,12 +47,10 @@ public class DataServlet extends HttpServlet {
         information.add("Chongqing");
 
         // get the current time and adds to the list
-        Date date = new Date();
-        information.add(date.toString());
+        information.add(new Date().toString());
 
         // convert it to json format and returns that json
-        Gson gson = new Gson();
-        String json = gson.toJson(information);
+        String json = new Gson().toJson(information);
         return json;
     }
 }
