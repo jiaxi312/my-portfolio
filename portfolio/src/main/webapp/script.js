@@ -36,3 +36,28 @@ function showWelcomeMsg() {
         document.getElementById("welcomeMsg").innerText = msg;
     });
 }
+
+/**
+ * Fetches a customized comments from the servlet
+ */
+function showComments() {
+    fetch('/data').then(response => response.json()).then((comments) => {
+        // Displays the strings in the comments list, one string each line
+        const commentsElement = document.getElementById('comments-container');
+        console.log(comments);
+        commentsElement.innerHTML = '';
+        commentsElement.appendChild(
+            createListElement('Name: ' + comments[0]));
+        commentsElement.appendChild(
+            createListElement('Location: ' + comments[1]));
+        commentsElement.appendChild(
+            createListElement('Time: ' + comments[2]));
+    });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
