@@ -37,15 +37,15 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String ANONYMOUS = "Anonymous";
         // Get the information from the post
-        String comments = getParameter(request, "comment-input", "");
-        String name = getParameter(request, "name-input", "Anonymous");
+        String comments = getParameterWithDefault(request, "comment-input", "");
+        String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
         boolean isAnonymous = Boolean.parseBoolean(
-                                getParameter(request, "anonymous", "false"));
-        
+                    getParameterWithDefault(request, "anonymous", "false"));
         // Check if the user want to submit the comment anonymously
         if (isAnonymous) {
-            name = "Anonymous";
+            name = ANONYMOUS;
         }
 
         // Respond with the result
@@ -58,9 +58,9 @@ public class DataServlet extends HttpServlet {
      * @return the request parameter, or the default value if the parameter
      *         was not specified by the client
      */
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             return defaultValue;
         }
         return value;
