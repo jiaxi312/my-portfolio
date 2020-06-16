@@ -37,7 +37,7 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String ANONYMOUS = "Anonymous";
+        static final String ANONYMOUS = "Anonymous";
         // Get the information from the post
         String comments = getParameterWithDefault(request, "comment-input", "");
         String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
@@ -73,15 +73,15 @@ public class DataServlet extends HttpServlet {
      * @return a String containing the json format of the those information
      */
     private static String getInformationInJson() {
-        // create an ArrayList containing three personal information
+        // Create an ArrayList containing three personal information
         ArrayList<String> information = new ArrayList<>();
         information.add("Jiaxi Chen");
         information.add("Chongqing");
 
-        // get the current time and adds to the list
+        // Get the current time and adds to the list
         information.add(new Date().toString());
 
-        // convert it to json format and returns that json
+        // Convert it to json format and returns that json
         return new Gson().toJson(information);
     }
 }
