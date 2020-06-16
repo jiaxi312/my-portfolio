@@ -35,22 +35,53 @@ public class DataServlet extends HttpServlet {
         response.getWriter().println(json);
     }
 
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        static final String ANONYMOUS = "Anonymous";
+        // Get the information from the post
+        String comments = getParameterWithDefault(request, "comment-input", "");
+        String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
+        
+        // Check if the user want to submit the comment anonymously
+        boolean isAnonymous = Boolean.parseBoolean(
+                    getParameterWithDefault(request, "anonymous", "false"));
+        if (isAnonymous) {
+            name = ANONYMOUS;
+        }
+
+        // Respond with the result
+        response.setContentType("text/html");
+        response.getWriter().println(name + " leaves comment: ");
+        response.getWriter().println(comments);
+    }
+
+    /**
+     * @return the request parameter, or the default value if the parameter
+     *         was not specified by the client
+     */
+    private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
+        String value = request.getParameter(name);
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     /**
      * Creates an ArrayList containing three information, then converts it
      * json.
      * @return a String containing the json format of the those information
      */
     private static String getInformationInJson() {
-        // create an ArrayList containing three personal information
+        // Create an ArrayList containing three personal information
         ArrayList<String> information = new ArrayList<>();
         information.add("Jiaxi Chen");
         information.add("Chongqing");
 
-        // get the current time and adds to the list
+        // Get the current time and adds to the list
         information.add(new Date().toString());
 
-        // convert it to json format and returns that json
-        String json = new Gson().toJson(information);
-        return json;
+        // Convert it to json format and returns that json
+        return new Gson().toJson(information);
     }
 }

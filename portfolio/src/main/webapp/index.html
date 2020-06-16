@@ -34,5 +34,19 @@
         <button onclick="showComments()">Welcome!</button>
         <div id="comments-container"></div>
     </div>
+    <div class="content">
+        <form action="/data" method="POST">
+
+            <p>Please leave your comments here: </p>
+            <textarea name="comment-input"></textarea>
+            <br><br>
+            <p>Your name if applicable?</p>
+            <input type="text" name="name-input"><br><br>
+            <input type="checkbox" name="anonymous" value="true"> Anonymous
+            <br><br>
+        
+            <input type="submit">
+        </form>
+    </div>
   </body>
 </html>
