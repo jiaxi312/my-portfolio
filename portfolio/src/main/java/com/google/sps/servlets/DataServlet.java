@@ -41,9 +41,10 @@ public class DataServlet extends HttpServlet {
         // Get the information from the post
         String comments = getParameterWithDefault(request, "comment-input", "");
         String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
+        
+        // Check if the user want to submit the comment anonymously
         boolean isAnonymous = Boolean.parseBoolean(
                     getParameterWithDefault(request, "anonymous", "false"));
-        // Check if the user want to submit the comment anonymously
         if (isAnonymous) {
             name = ANONYMOUS;
         }
