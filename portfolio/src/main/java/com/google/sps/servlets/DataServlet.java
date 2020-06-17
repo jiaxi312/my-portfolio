@@ -14,6 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import com.google.gson.Gson;
-
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -37,9 +39,8 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        static final String ANONYMOUS = "Anonymous";
         // Get the information from the post
-        String comments = getParameterWithDefault(request, "comment-input", "");
+        String comment = getParameterWithDefault(request, "comment-input", "");
         String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
         
         // Check if the user want to submit the comment anonymously
@@ -49,10 +50,15 @@ public class DataServlet extends HttpServlet {
             name = ANONYMOUS;
         }
 
-        // Respond with the result
-        response.setContentType("text/html");
-        response.getWriter().println(name + " leaves comment: ");
-        response.getWriter().println(comments);
+        // Store the comment and name as entities into the datastore
+        Entity commentEntity = new Entity("Comment");
+        commentEntity.setProperty("name", name);
+        commentEntity.setProperty("content", comment);
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentEntity);
+
+        response.sendRedirect("/index.html");
     }
 
     /**
@@ -84,4 +90,7 @@ public class DataServlet extends HttpServlet {
         // Convert it to json format and returns that json
         return new Gson().toJson(information);
     }
+
+    private static final String ANONYMOUS = "Anonymous";
+    
 }
