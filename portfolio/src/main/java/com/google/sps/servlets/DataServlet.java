@@ -30,8 +30,6 @@ import com.google.gson.Gson;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    static final String ANONYMOUS = "Anonymous";
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String json = getInformationInJson();
@@ -92,4 +90,7 @@ public class DataServlet extends HttpServlet {
         // Convert it to json format and returns that json
         return new Gson().toJson(information);
     }
+
+    private static final String ANONYMOUS = "Anonymous";
+    
 }
