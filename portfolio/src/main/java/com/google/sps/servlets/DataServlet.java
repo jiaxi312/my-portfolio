@@ -37,7 +37,7 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Fetch the comment from the datastore
-        PreparedQuery comments = datastore.prepare(new Query("Comment"));
+        PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
         // Store the contents of those comments in a list
         List<String> commentList = new ArrayList<>();
@@ -47,7 +47,7 @@ public class DataServlet extends HttpServlet {
 
         // Respond the comments as json form
         response.setContentType("application/json");
-        response.getWriter().println(new Gson().toJson(commentList));
+        response.getWriter().println(GSON.toJson(commentList));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DataServlet extends HttpServlet {
         commentEntity.setProperty("name", name);
         commentEntity.setProperty("content", comment);
 
-        datastore.put(commentEntity);
+        DEFAULT_DATASTORE_SERVICE.put(commentEntity);
 
         response.sendRedirect("/index.html");
     }
@@ -86,6 +86,7 @@ public class DataServlet extends HttpServlet {
     }
 
     private static final String ANONYMOUS = "Anonymous";
-    private static final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
+    private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
+                            = DatastoreServiceFactory.getDatastoreService();
+    private static final Gson GSON = new Gson();
 }
