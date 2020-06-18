@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="loadComments()">
     <div id="topHeader">
       <img src="/images/Google_background.png" alt="google background">
     </div>
@@ -47,6 +47,10 @@
         
             <input type="submit">
         </form>
+    </div>
+    <div class="content">
+        <p>The recorded comment:</p>
+        <ul id="comment-list"></ul>
     </div>
   </body>
 </html>

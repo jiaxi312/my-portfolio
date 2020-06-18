@@ -28,16 +28,6 @@ function addRandomGreeting() {
 }
 
 /**
- * Fetches a welcome message from the servlet, when clickes the button
- */
-function showWelcomeMsg() {
-    // Using the arrow function modle to reduce the code
-    fetch('/data').then(response => response.text()).then((msg) => {
-        document.getElementById("welcomeMsg").innerText = msg;
-    });
-}
-
-/**
  * Fetches a customized comments from the servlet
  */
 function showComments() {
@@ -60,4 +50,28 @@ function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
   return liElement;
+}
+
+/** Fetches comments from the datastore and adds them to DOM */
+function loadComments() {
+    fetch('/data').then(response => response.json()).then((comments) => {
+        // Display those comments as a list
+        const commentsListElement = document.getElementById('comment-list');
+        comments.forEach((comment) => {
+            commentsListElement.appendChild(createCommentElement(comment));
+        });
+    });
+}
+
+/** Creates an element that represents the given comment */
+function createCommentElement(comment) {
+    const commentElement = document.createElement('li');
+    commentElement.className = "comment";
+
+    // Display the content of the comment
+    const contentElement = document.createElement('span');
+    contentElement.innerText = comment;
+
+    commentElement.appendChild(contentElement);
+    return commentElement;
 }
