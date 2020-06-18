@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="loadComments()">
     <div id="topHeader">
       <img src="/images/Google_background.png" alt="google background">
     </div>
@@ -29,11 +29,6 @@
         developed by Blizzard Entertainment. Also, I enjoy watching movies and 
         sometimes I'll go workout with my friends. </p>
     </div>
-    <div class="content" id="dataServlet">
-        <p>Click to request some comments.</p>
-        <button onclick="showComments()">Welcome!</button>
-        <div id="comments-container"></div>
-    </div>
     <div class="content">
         <form action="/data" method="POST">
 
@@ -47,6 +42,10 @@
         
             <input type="submit">
         </form>
+    </div>
+    <div class="content">
+        <p>The recorded comment:</p>
+        <ul id="comment-list"></ul>
     </div>
   </body>
 </html>

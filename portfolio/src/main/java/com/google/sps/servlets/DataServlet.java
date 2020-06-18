@@ -17,80 +17,76 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import com.google.gson.Gson;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String json = getInformationInJson();
-        response.setContentType("application/json");
-        response.getWriter().println(json);
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Fetch the comment from the datastore
+    PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
+
+    // Store the contents of those comments in a list
+    List<String> commentList = new ArrayList<>();
+    for (Entity entity : comments.asIterable()) {
+      commentList.add((String) entity.getProperty("content"));
     }
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Get the information from the post
-        String comment = getParameterWithDefault(request, "comment-input", "");
-        String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
+    // Respond the comments as json form
+    response.setContentType("application/json");
+    response.getWriter().println(GSON.toJson(commentList));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the information from the post
+    String comment = getParameterWithDefault(request, "comment-input", "");
+    String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
         
-        // Check if the user want to submit the comment anonymously
-        boolean isAnonymous = Boolean.parseBoolean(
-                    getParameterWithDefault(request, "anonymous", "false"));
-        if (isAnonymous) {
-            name = ANONYMOUS;
-        }
-
-        // Store the comment and name as entities into the datastore
-        Entity commentEntity = new Entity("Comment");
-        commentEntity.setProperty("name", name);
-        commentEntity.setProperty("content", comment);
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(commentEntity);
-
-        response.sendRedirect("/index.html");
+    // Check if the user want to submit the comment anonymously
+    boolean isAnonymous = Boolean.parseBoolean(
+                getParameterWithDefault(request, "anonymous", "false"));
+    if (isAnonymous) {
+      name = ANONYMOUS;
     }
 
-    /**
-     * @return the request parameter, or the default value if the parameter
-     *         was not specified by the client
-     */
-    private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        if (value == null || value.isEmpty()) {
-            return defaultValue;
-        }
-        return value;
+    // Store the comment and name as entities into the datastore
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("name", name);
+    commentEntity.setProperty("content", comment);
+
+    DEFAULT_DATASTORE_SERVICE.put(commentEntity);
+
+    response.sendRedirect("/index.html");
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null || value.isEmpty()) {
+        return defaultValue;
     }
+    return value;
+  }
 
-    /**
-     * Creates an ArrayList containing three information, then converts it
-     * json.
-     * @return a String containing the json format of the those information
-     */
-    private static String getInformationInJson() {
-        // Create an ArrayList containing three personal information
-        ArrayList<String> information = new ArrayList<>();
-        information.add("Jiaxi Chen");
-        information.add("Chongqing");
-
-        // Get the current time and adds to the list
-        information.add(new Date().toString());
-
-        // Convert it to json format and returns that json
-        return new Gson().toJson(information);
-    }
-
-    private static final String ANONYMOUS = "Anonymous";
-    
+  private static final String ANONYMOUS = "Anonymous";
+  private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
+                          = DatastoreServiceFactory.getDatastoreService();
+  private static final Gson GSON = new Gson();
 }
