@@ -12,39 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
-}
-
-/**
- * Fetches a customized comments from the servlet
- */
-function showComments() {
-    fetch('/data').then(response => response.json()).then((comments) => {
-        // display the strings in the comments list, one string each line
-        const commentsElement = document.getElementById('comments-container');
-        console.log(comments);
-        commentsElement.innerHTML = '';
-        commentsElement.appendChild(
-            createListElement('Name: ' + comments[0]));
-        commentsElement.appendChild(
-            createListElement('Location: ' + comments[1]));
-        commentsElement.appendChild(
-            createListElement('Time: ' + comments[2]));
-    });
-}
-
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');

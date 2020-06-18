@@ -37,7 +37,6 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Fetch the comment from the datastore
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery comments = datastore.prepare(new Query("Comment"));
 
         // Store the contents of those comments in a list
@@ -69,7 +68,6 @@ public class DataServlet extends HttpServlet {
         commentEntity.setProperty("name", name);
         commentEntity.setProperty("content", comment);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
 
         response.sendRedirect("/index.html");
@@ -87,24 +85,7 @@ public class DataServlet extends HttpServlet {
         return value;
     }
 
-    /**
-     * Creates an ArrayList containing three information, then converts it
-     * json.
-     * @return a String containing the json format of the those information
-     */
-    private static String getInformationInJson() {
-        // Create an ArrayList containing three personal information
-        ArrayList<String> information = new ArrayList<>();
-        information.add("Jiaxi Chen");
-        information.add("Chongqing");
-
-        // Get the current time and adds to the list
-        information.add(new Date().toString());
-
-        // Convert it to json format and returns that json
-        return new Gson().toJson(information);
-    }
-
     private static final String ANONYMOUS = "Anonymous";
+    private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
 }
