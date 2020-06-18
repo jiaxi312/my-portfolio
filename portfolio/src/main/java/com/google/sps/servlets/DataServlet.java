@@ -34,59 +34,59 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Fetch the comment from the datastore
-        PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Fetch the comment from the datastore
+    PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
-        // Store the contents of those comments in a list
-        List<String> commentList = new ArrayList<>();
-        for (Entity entity : comments.asIterable()) {
-            commentList.add((String) entity.getProperty("content"));
-        }
-
-        // Respond the comments as json form
-        response.setContentType("application/json");
-        response.getWriter().println(GSON.toJson(commentList));
+    // Store the contents of those comments in a list
+    List<String> commentList = new ArrayList<>();
+    for (Entity entity : comments.asIterable()) {
+      commentList.add((String) entity.getProperty("content"));
     }
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Get the information from the post
-        String comment = getParameterWithDefault(request, "comment-input", "");
-        String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
+    // Respond the comments as json form
+    response.setContentType("application/json");
+    response.getWriter().println(GSON.toJson(commentList));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the information from the post
+    String comment = getParameterWithDefault(request, "comment-input", "");
+    String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
         
-        // Check if the user want to submit the comment anonymously
-        boolean isAnonymous = Boolean.parseBoolean(
-                    getParameterWithDefault(request, "anonymous", "false"));
-        if (isAnonymous) {
-            name = ANONYMOUS;
-        }
-
-        // Store the comment and name as entities into the datastore
-        Entity commentEntity = new Entity("Comment");
-        commentEntity.setProperty("name", name);
-        commentEntity.setProperty("content", comment);
-
-        DEFAULT_DATASTORE_SERVICE.put(commentEntity);
-
-        response.sendRedirect("/index.html");
+    // Check if the user want to submit the comment anonymously
+    boolean isAnonymous = Boolean.parseBoolean(
+                getParameterWithDefault(request, "anonymous", "false"));
+    if (isAnonymous) {
+      name = ANONYMOUS;
     }
 
-    /**
-     * @return the request parameter, or the default value if the parameter
-     *         was not specified by the client
-     */
-    private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        if (value == null || value.isEmpty()) {
-            return defaultValue;
-        }
-        return value;
-    }
+    // Store the comment and name as entities into the datastore
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("name", name);
+    commentEntity.setProperty("content", comment);
 
-    private static final String ANONYMOUS = "Anonymous";
-    private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
-                            = DatastoreServiceFactory.getDatastoreService();
-    private static final Gson GSON = new Gson();
+    DEFAULT_DATASTORE_SERVICE.put(commentEntity);
+
+    response.sendRedirect("/index.html");
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null || value.isEmpty()) {
+        return defaultValue;
+    }
+    return value;
+  }
+
+  private static final String ANONYMOUS = "Anonymous";
+  private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
+                          = DatastoreServiceFactory.getDatastoreService();
+  private static final Gson GSON = new Gson();
 }
