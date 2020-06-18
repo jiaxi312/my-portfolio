@@ -86,6 +86,6 @@ public class DataServlet extends HttpServlet {
     }
 
     private static final String ANONYMOUS = "Anonymous";
-    private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    private static final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
 }
