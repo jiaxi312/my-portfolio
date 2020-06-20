@@ -21,9 +21,13 @@ function createListElement(text) {
 
 /** Fetches comments from the datastore and adds them to DOM */
 function loadComments() {
-    fetch('/data').then(response => response.json()).then((comments) => {
-        // Display those comments as a list
+    const numComments = document.getElementById('comments-to-show').value;
+    const url = `/data?comments-to-show=${numComments}`;
+    fetch(url).then(response => response.json()).then((comments) => {
+        // Refresh the page
         const commentsListElement = document.getElementById('comment-list');
+        commentsListElement.innerText = '';
+        // Display those comments as a list
         comments.forEach((comment) => {
             commentsListElement.appendChild(createCommentElement(comment));
         });
@@ -37,8 +41,26 @@ function createCommentElement(comment) {
 
     // Display the content of the comment
     const contentElement = document.createElement('span');
-    contentElement.innerText = comment;
+    contentElement.innerText = comment.content;
+
+    // Create the button to delete the comment
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerText = 'delete';
+    deleteButtonElement.addEventListener('click', () => {
+        // Delete the comment and remove it from the DOM
+        deleteComment(comment);
+        commentElement.remove();
+    });
 
     commentElement.appendChild(contentElement);
+    commentElement.appendChild(deleteButtonElement);
     return commentElement;
+}
+
+/** Tells the servlet to delete the given comment */
+function deleteComment(comment) {
+    const params = new URLSearchParams();
+    params.append('id', comment.id);
+    console.log(comment.id);
+    fetch('/delete-data', {method: 'POST', body: params});
 }
