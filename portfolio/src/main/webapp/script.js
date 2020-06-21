@@ -41,7 +41,7 @@ function createCommentElement(comment) {
 
     // Display the content of the comment
     const contentElement = document.createElement('span');
-    contentElement.innerText = comment.content;
+    contentElement.innerText = comment.propertyMap.content;
 
     // Create the button to delete the comment
     const deleteButtonElement = document.createElement('button');
@@ -60,7 +60,7 @@ function createCommentElement(comment) {
 /** Tells the servlet to delete the given comment */
 function deleteComment(comment) {
     const params = new URLSearchParams();
-    params.append('id', comment.id);
+    params.append('id', comment.key.id);
     console.log(comment.id);
     fetch('/delete-data', {method: 'POST', body: params});
 }

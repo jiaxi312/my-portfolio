@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import java.util.Iterator;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,19 +42,12 @@ public class DataServlet extends HttpServlet {
                 getParameterWithDefault(request, "comments-to-show", DEFALUT_COMMENTS_TO_SHOW));
 
     // Fetch the max number of comments from the datastore
-    PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
+    PreparedQuery commentEntities = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
     // Fetch the max number of comments
-    List<Comment> commentList = new ArrayList<>();
-    for (Entity commentEntity : comments.asIterable(FetchOptions.Builder.withLimit(maxComments))) {
-      long id = (long) commentEntity.getKey().getId();
-      String content = (String) commentEntity.getProperty("content");
-      commentList.add(new Comment(id, content));
-    }
-
-    // Respond the comments as json form
     response.setContentType("application/json");
-    response.getWriter().println(GSON.toJson(commentList));
+    response.getWriter().println(
+            GSON.toJson(commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
   }
 
   @Override
@@ -104,17 +96,4 @@ public class DataServlet extends HttpServlet {
                           = DatastoreServiceFactory.getDatastoreService();
   private static final Gson GSON = new Gson();
   private static final String DEFALUT_COMMENTS_TO_SHOW = "0";
-
-  /** Class that stores the content of a comment and it's id in the datastore */
-  private static final class Comment {
-
-    /** Construct a comment with given content and id*/
-    private Comment(long id, String content) {
-        this.content = content;
-        this.id = id;
-    }
-
-    private final String content;
-    private final long id;
-  }
 }
