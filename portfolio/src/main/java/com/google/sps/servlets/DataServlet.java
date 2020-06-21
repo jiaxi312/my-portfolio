@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,17 +42,15 @@ public class DataServlet extends HttpServlet {
     final int maxComments = Integer.parseInt(
                 getParameterWithDefault(request, "comments-to-show", DEFALUT_COMMENTS_TO_SHOW));
 
-    // Fetch the comment from the datastore
+    // Fetch the max number of comments from the datastore
     PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
-    // Fetch the max number of comments. If there is no enough comments, fetch all existing comments
+    // Fetch the max number of comments
     List<Comment> commentList = new ArrayList<>();
-    Iterator<Entity> commentsItr = comments.asIterable().iterator();
-    for (int i = 1; i <= maxComments && commentsItr.hasNext(); i++) {
-        Entity commentEntity = commentsItr.next();
-        long id = (long) commentEntity.getKey().getId();
-        String content = (String) commentEntity.getProperty("content");
-        commentList.add(new Comment(id, content));
+    for (Entity commentEntity : comments.asIterable(FetchOptions.Builder.withLimit(maxComments))) {
+      long id = (long) commentEntity.getKey().getId();
+      String content = (String) commentEntity.getProperty("content");
+      commentList.add(new Comment(id, content));
     }
 
     // Respond the comments as json form
@@ -104,10 +103,10 @@ public class DataServlet extends HttpServlet {
   private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
                           = DatastoreServiceFactory.getDatastoreService();
   private static final Gson GSON = new Gson();
-  private static final String DEFALUT_COMMENTS_TO_SHOW = "10";
+  private static final String DEFALUT_COMMENTS_TO_SHOW = "0";
 
   /** Class that stores the content of a comment and it's id in the datastore */
-  private static class Comment {
+  private static final class Comment {
 
     /** Construct a comment with given content and id*/
     private Comment(long id, String content) {
@@ -117,7 +116,5 @@ public class DataServlet extends HttpServlet {
 
     private final String content;
     private final long id;
-
   }
-
 }
