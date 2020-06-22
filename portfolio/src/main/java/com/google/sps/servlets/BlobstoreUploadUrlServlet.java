@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** BlobstoreServlet that responses an URL for uploading an image when requested*/
-@WebServlet("/blobstore-upload-url")
+@WebServlet("/image-upload-url")
 public class BlobstoreUploadUrlServlet extends HttpServlet {
 
   @Override

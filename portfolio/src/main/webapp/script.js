@@ -66,8 +66,8 @@ function deleteComment(comment) {
 }
 
 /** Fetches the URL to upload the image and show the comment form */
-function fetchBlobstoreUrlAndShowForm() {
-  fetch('/blobstore-upload-url').then(response => response.text())
+function fetchImageUploadUrlAndShowForm() {
+  fetch('/image-upload-url').then(response => response.text())
   .then((imageUploadUrl) => {
     // Display the form elment
     const commentFormElement = document.getElementById('comment-form');

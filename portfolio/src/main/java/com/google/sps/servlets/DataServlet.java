@@ -43,7 +43,7 @@ public class DataServlet extends HttpServlet {
 
     // Fetch the max number of comments from the datastore
     PreparedQuery commentEntities = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
-    
+
     // Fetch the max number of comments
     response.setContentType("application/json");
     response.getWriter().println(
