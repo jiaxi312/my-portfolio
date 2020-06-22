@@ -43,7 +43,7 @@ public class DataServlet extends HttpServlet {
 
     // Fetch the max number of comments from the datastore
     PreparedQuery commentEntities = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
-
+    
     // Fetch the max number of comments
     response.setContentType("application/json");
     response.getWriter().println(
@@ -56,7 +56,7 @@ public class DataServlet extends HttpServlet {
     String comment = getParameterWithDefault(request, "comment-input", "");
     if (comment.isEmpty()) {
         // Do nothing and redirect to the homepage for emtpy input
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/index.jsp");
         return;
     }
 
@@ -76,7 +76,7 @@ public class DataServlet extends HttpServlet {
 
     DEFAULT_DATASTORE_SERVICE.put(commentEntity);
 
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/index.jsp");
   }
 
   /**

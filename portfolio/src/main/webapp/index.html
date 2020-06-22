@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="loadComments()">
+  <body>
     <div id="topHeader">
       <img src="/images/Google_background.png" alt="google background">
     </div>
@@ -29,11 +29,14 @@
         developed by Blizzard Entertainment. Also, I enjoy watching movies and 
         sometimes I'll go workout with my friends. </p>
     </div>
-    <div class="content">
-        <form action="/data" method="POST">
+    <div class="content" onload="fetchBlobstoreUrlAndShowForm()">
+        <form id="comment-form" class="hidden" method="POST" enctype="multipart/form-data">
 
             <p>Please leave your comments here: </p>
             <textarea name="comment-input"></textarea>
+            <br>
+            <p>Upload an image: </p>
+            <input type="file" name="image">
             <br><br>
             <p>Your name if applicable?</p>
             <input type="text" name="name-input"><br><br>
