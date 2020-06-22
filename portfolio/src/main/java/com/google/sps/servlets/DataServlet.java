@@ -56,7 +56,7 @@ public class DataServlet extends HttpServlet {
     String comment = getParameterWithDefault(request, "comment-input", "");
     if (comment.isEmpty()) {
         // Do nothing and redirect to the homepage for emtpy input
-        response.sendRedirect("/index.jsp");
+        response.sendRedirect("/index.html");
         return;
     }
 
@@ -76,7 +76,7 @@ public class DataServlet extends HttpServlet {
 
     DEFAULT_DATASTORE_SERVICE.put(commentEntity);
 
-    response.sendRedirect("/index.jsp");
+    response.sendRedirect("/index.html");
   }
 
   /**
