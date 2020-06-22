@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,24 +37,29 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Fetch the comment from the datastore
-    PreparedQuery comments = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
+    // Decide the max number of comments to display
+    final int maxComments = Integer.parseInt(
+                getParameterWithDefault(request, "comments-to-show", DEFALUT_COMMENTS_TO_SHOW));
 
-    // Store the contents of those comments in a list
-    List<String> commentList = new ArrayList<>();
-    for (Entity entity : comments.asIterable()) {
-      commentList.add((String) entity.getProperty("content"));
-    }
+    // Fetch the max number of comments from the datastore
+    PreparedQuery commentEntities = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
-    // Respond the comments as json form
+    // Fetch the max number of comments
     response.setContentType("application/json");
-    response.getWriter().println(GSON.toJson(commentList));
+    response.getWriter().println(
+            GSON.toJson(commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the information from the post
     String comment = getParameterWithDefault(request, "comment-input", "");
+    if (comment.isEmpty()) {
+        // Do nothing and redirect to the homepage for emtpy input
+        response.sendRedirect("/index.html");
+        return;
+    }
+
     String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
         
     // Check if the user want to submit the comment anonymously
@@ -89,4 +95,5 @@ public class DataServlet extends HttpServlet {
   private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
                           = DatastoreServiceFactory.getDatastoreService();
   private static final Gson GSON = new Gson();
+  private static final String DEFALUT_COMMENTS_TO_SHOW = "0";
 }

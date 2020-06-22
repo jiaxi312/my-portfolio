@@ -39,12 +39,16 @@
             <input type="text" name="name-input"><br><br>
             <input type="checkbox" name="anonymous" value="true"> Anonymous
             <br><br>
-        
+            
             <input type="submit">
         </form>
     </div>
     <div class="content">
-        <p>The recorded comment:</p>
+        <label>Number of comments to show: </label>
+        <input type="number" id="comments-to-show" min="0" max="10" value="0">
+        <br><br>
+        <button onclick="loadComments()">Show!</button>
+        <hr/>
         <ul id="comment-list"></ul>
     </div>
   </body>
