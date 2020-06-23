@@ -26,7 +26,6 @@ public final class ServletHelper {
   protected static final BlobstoreService DEFAULT_BLOBSTORE_SERVICE 
                               = BlobstoreServiceFactory.getBlobstoreService();
 
-  /* The helper methods that could be used in the servlets*/
   /**
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client
@@ -59,9 +58,6 @@ public final class ServletHelper {
       blobstoreService.delete(blobKey);
       return null;
     }
-
-    // We could check the validity of the file here, e.g. to make sure it's an image file
-    // https://stackoverflow.com/q/10779564/873165
 
     // Use ImagesService to get a URL that points to the uploaded file.
     ImagesService imagesService = ImagesServiceFactory.getImagesService();
