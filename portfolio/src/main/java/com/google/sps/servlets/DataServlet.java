@@ -14,8 +14,6 @@
 
 package com.google.sps.servlets;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -23,6 +21,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
@@ -38,11 +37,12 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Decide the max number of comments to display
-    final int maxComments = Integer.parseInt(
-                getParameterWithDefault(request, "comments-to-show", DEFALUT_COMMENTS_TO_SHOW));
+    final int maxComments = Integer.parseInt(ServletHelper.getParameterWithDefault
+                                (request, "comments-to-show", DEFALUT_COMMENTS_TO_SHOW));
 
     // Fetch the max number of comments from the datastore
-    PreparedQuery commentEntities = DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
+    PreparedQuery commentEntities =
+                        ServletHelper.DEFAULT_DATASTORE_SERVICE.prepare(new Query("Comment"));
 
     // Fetch the max number of comments
     response.setContentType("application/json");
@@ -53,47 +53,36 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the information from the post
-    String comment = getParameterWithDefault(request, "comment-input", "");
+    String comment = ServletHelper.getParameterWithDefault(request, "comment-input", "");
     if (comment.isEmpty()) {
         // Do nothing and redirect to the homepage for emtpy input
         response.sendRedirect("/index.html");
         return;
     }
 
-    String name = getParameterWithDefault(request, "name-input", ANONYMOUS);
-        
-    // Check if the user want to submit the comment anonymously
-    boolean isAnonymous = Boolean.parseBoolean(
-                getParameterWithDefault(request, "anonymous", "false"));
-    if (isAnonymous) {
-      name = ANONYMOUS;
-    }
+    String imageUrl = ServletHelper.getUploadedFileUrl(request, "image");
 
     // Store the comment and name as entities into the datastore
     Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("name", name);
     commentEntity.setProperty("content", comment);
+    commentEntity.setProperty("imageUrl", imageUrl);
+    ServletHelper.DEFAULT_DATASTORE_SERVICE.put(commentEntity);
 
-    DEFAULT_DATASTORE_SERVICE.put(commentEntity);
-
-    response.sendRedirect("/index.html");
+    showUploadedComment(response.getWriter(), comment, imageUrl);
   }
 
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
-  private String getParameterWithDefault(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    if (value == null || value.isEmpty()) {
-        return defaultValue;
-    }
-    return value;
+  /** Show the comment uploaded and the image if any*/
+  private static void showUploadedComment(PrintWriter out, String comment, String imageUrl) {
+    out.println("<p>Here's the comment you left: </p>");
+    out.println(comment);
+    out.println("<p>Here's the image you uploaded:</p>");
+    out.println("<a href=\"" + imageUrl + "\">");
+    out.println("<img src=\"" + imageUrl + "\" />");
+    out.println("</a><br><br>");
+    out.println("<a href=\"/index.html\"> click here to return </a>");
   }
 
   private static final String ANONYMOUS = "Anonymous";
-  private static final DatastoreService DEFAULT_DATASTORE_SERVICE 
-                          = DatastoreServiceFactory.getDatastoreService();
   private static final Gson GSON = new Gson();
   private static final String DEFALUT_COMMENTS_TO_SHOW = "0";
 }
