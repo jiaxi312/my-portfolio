@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Jiax's Portfolio</title>
+    <title>Jiaxi's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="fetchImageUploadUrlAndShowForm()">
     <div id="topHeader">
       <img src="/images/Google_background.png" alt="google background">
     </div>
@@ -29,7 +29,7 @@
         developed by Blizzard Entertainment. Also, I enjoy watching movies and 
         sometimes I'll go workout with my friends. </p>
     </div>
-    <div class="content" onload="fetchImageUploadUrlAndShowForm()">
+    <div class="content">
         <form id="comment-form" class="hidden" method="POST" enctype="multipart/form-data">
 
             <p>Please leave your comments here: </p>
@@ -37,10 +37,6 @@
             <br>
             <p>Upload an image: </p>
             <input type="file" name="image">
-            <br><br>
-            <p>Your name if applicable?</p>
-            <input type="text" name="name-input"><br><br>
-            <input type="checkbox" name="anonymous" value="true"> Anonymous
             <br><br>
             
             <input type="submit">
