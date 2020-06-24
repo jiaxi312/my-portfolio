@@ -85,8 +85,8 @@ public class DataServlet extends HttpServlet {
     out.println("<a href=\"/index.html\"> click here to return </a>");
   }
 
-  /** Shows the labels for the uploaded image*/
-  private static void showImageLabels(HttpServletRequest request) throws IOException {
+  /** Shows the labels extracted from the uploaded impage*/
+  private static void showImageLabels(HttpServletRequest request) throws IOException{
     BlobKey blobKey = ServletHelper.getBlobKey(request, "image");
     byte[] blobBytes = ServletHelper.getBlobBytes(blobKey);
     List<EntityAnnotation> imageLabels = ServletHelper.getImageLabels(blobBytes);

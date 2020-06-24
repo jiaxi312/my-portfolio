@@ -10,6 +10,10 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+<<<<<<< HEAD
+=======
+import com.google.appengine.api.images.ServingUrlOptions;
+>>>>>>> 3326088f53ba390fcf4600e9d0680f661e41bd1b
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
@@ -121,8 +125,8 @@ public final class ServletHelper {
     boolean continueReading = true;
     while (continueReading) {
       // end index is inclusive, so we have to subtract 1 to get fetchSize bytes
-      byte[] b =
-          DEFAULT_BLOBSTORE_SERVICE.fetchData(blobKey, currentByteIndex, currentByteIndex + fetchSize - 1);
+      byte[] b = DEFAULT_BLOBSTORE_SERVICE.
+                    fetchData(blobKey, currentByteIndex, currentByteIndex + fetchSize - 1);
       outputBytes.write(b);
 
       // if we read fewer bytes than we requested, then we reached the end
