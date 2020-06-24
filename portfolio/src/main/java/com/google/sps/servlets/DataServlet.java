@@ -19,6 +19,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -69,9 +71,10 @@ public class DataServlet extends HttpServlet {
     ServletHelper.DEFAULT_DATASTORE_SERVICE.put(commentEntity);
 
     showUploadedComment(response.getWriter(), comment, imageUrl);
+    showImageLabels(request);
   }
 
-  /** Show the comment uploaded and the image if any*/
+  /** Shows the comment uploaded and the image if any*/
   private static void showUploadedComment(PrintWriter out, String comment, String imageUrl) {
     out.println("<p>Here's the comment you left: </p>");
     out.println(comment);
@@ -80,6 +83,18 @@ public class DataServlet extends HttpServlet {
     out.println("<img src=\"" + imageUrl + "\" />");
     out.println("</a><br><br>");
     out.println("<a href=\"/index.html\"> click here to return </a>");
+  }
+
+  /** Shows the labels extracted from the uploaded impage*/
+  private static void showImageLabels(HttpServletRequest request) throws IOException{
+    BlobKey blobKey = ServletHelper.getBlobKey(request, "image");
+    byte[] blobBytes = ServletHelper.getBlobBytes(blobKey);
+    List<EntityAnnotation> imageLabels = ServletHelper.getImageLabels(blobBytes);
+
+    // Display the labels to the console
+    for (EntityAnnotation label : imageLabels) {
+      System.out.println(label.getDescription() + " " + label.getScore());
+    }
   }
 
   private static final String ANONYMOUS = "Anonymous";
