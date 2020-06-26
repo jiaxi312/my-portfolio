@@ -118,8 +118,7 @@ public final class ServletHelper {
 
     int fetchSize = BlobstoreService.MAX_BLOB_FETCH_SIZE;
     long currentByteIndex = 0;
-    boolean continueReading = true;
-    while (continueReading) {
+    while (true) {
       // end index is inclusive, so we have to subtract 1 to get fetchSize bytes
       byte[] b = DEFAULT_BLOBSTORE_SERVICE.
                     fetchData(blobKey, currentByteIndex, currentByteIndex + fetchSize - 1);
@@ -127,7 +126,7 @@ public final class ServletHelper {
 
       // if we read fewer bytes than we requested, then we reached the end
       if (b.length < fetchSize) {
-        continueReading = false;
+        break;
       }
 
       currentByteIndex += fetchSize;
