@@ -18,6 +18,7 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.protobuf.ByteString;
+import com.google.api.gax.rpc.ApiException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -63,7 +65,7 @@ public final class ServletHelper {
     BlobKey blobKey = blobKeys.get(0);
 
     // User submitted form without selecting a file, so we can't get a URL. (live server)
-    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+    BlobInfo blobInfo = DEFAULT_BLOB_INFO_FACTORY.loadBlobInfo(blobKey);
     if (blobInfo.getSize() == 0) {
       DEFAULT_BLOBSTORE_SERVICE.delete(blobKey);
       return null;
@@ -100,7 +102,7 @@ public final class ServletHelper {
     BlobKey blobKey = blobKeys.get(0);
 
     // User submitted form without selecting a file, so the BlobKey is empty. (live server)
-    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+    BlobInfo blobInfo = DEFAULT_BLOB_INFO_FACTORY.loadBlobInfo(blobKey);
     if (blobInfo.getSize() == 0) {
       DEFAULT_BLOBSTORE_SERVICE.delete(blobKey);
       return null;
@@ -146,22 +148,25 @@ public final class ServletHelper {
     Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
     AnnotateImageRequest request =
         AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
-    List<AnnotateImageRequest> requests = new ArrayList<>();
-    requests.add(request);
 
-    ImageAnnotatorClient client = ImageAnnotatorClient.create();
-    BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(requests);
-    client.close();
-    List<AnnotateImageResponse> imageResponses = batchResponse.getResponsesList();
-    AnnotateImageResponse imageResponse = imageResponses.get(0);
-
-    if (imageResponse.hasError()) {
-      System.err.println("Error getting image labels: " + imageResponse.getError().getMessage());
+    try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+      List<AnnotateImageRequest> requests = Arrays.asList(request);
+      BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(requests);
+      client.close();
+      List<AnnotateImageResponse> imageResponses = batchResponse.getResponsesList();
+      AnnotateImageResponse imageResponse = imageResponses.get(0);
+      if (imageResponse.hasError()) {
+        System.err.println("Error getting image labels: " + imageResponse.getError().getMessage());
+        return null;
+      }
+      return imageResponse.getLabelAnnotationsList();
+    } catch (ApiException e) {
+      System.err.println("Rmote call fails: " + e);
       return null;
     }
-
-    return imageResponse.getLabelAnnotationsList();
   }
+
+  private static final BlobInfoFactory DEFAULT_BLOB_INFO_FACTORY = new BlobInfoFactory();
 
   /** Discards the default constructor, not allows to construct this class anywhere else*/
   private ServletHelper() {}
