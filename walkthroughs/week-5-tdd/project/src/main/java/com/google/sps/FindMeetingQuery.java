@@ -15,6 +15,7 @@
 package com.google.sps;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Arrays;
@@ -29,11 +30,12 @@ public final class FindMeetingQuery {
     Arrays.sort(eventsArray, ORDER_BY_TIME_RANGE);
 
     // Find the collection of time range to hold the meeting
+    Collection<String> requiredAttendees = request.getAttendees();
     Collection<TimeRange> queries = new ArrayList<>();
     int preStartTime = TimeRange.START_OF_DAY;
     for (Event event : eventsArray) {
       TimeRange eventTimeRange = event.getWhen();
-      if (!areAllAttendeesFree(event, request)) {
+      if (!Collections.disjoint(event.getAttendees(), requiredAttendees)) {
         if (canRequestBeHold(preStartTime, eventTimeRange.start(), request)) {
           queries.add(TimeRange.fromStartEnd(preStartTime, eventTimeRange.start(), false));
         }
@@ -48,24 +50,7 @@ public final class FindMeetingQuery {
     }
     return queries;
   }
-
-  /**
-   * Returns true if the event contains people that are required to attend the metting
-   * false otherwise.
-   */
-  private static boolean areAllAttendeesFree(Event event, MeetingRequest request) {
-    Collection<String> eventAttendees = event.getAttendees();
-    Collection<String> meetingAttendees = request.getAttendees();
-
-    for (String attendee: meetingAttendees) {
-      if (eventAttendees.contains(attendee)) {
-        // The required attendee cannot attend the meeting
-        return false;
-      }
-    }
-    return true;
-  }
-
+  
   /**
    * Returns true if the meeting request can be hold during the start time and end time,
    * false otherwise.
