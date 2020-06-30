@@ -22,7 +22,9 @@ import java.util.Arrays;
 
 public final class FindMeetingQuery {
   /**
-   * Finds a collection of time range that the meeting can be hold
+   * Finds a collection of time range that the meeting can be hold.
+   * If one or more time slots exists so that both required and optional attendees can attend
+   * return those time slots. Otherwise, return the time slots that fit just the required attendees
    */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // Sort the events list based the starting time of each event
@@ -35,31 +37,36 @@ public final class FindMeetingQuery {
     // If there is no required attendees, then consider only the optinal attendees
     requiredAttendees = requiredAttendees.isEmpty() ? optionalAttendees : requiredAttendees;
 
-    Collection<TimeRange> queryWithRequiredAttendees = new ArrayList<>();
-    Collection<TimeRange> queryWithOptionalAttendees = new ArrayList<>();
-    int startTimeForRequired = TimeRange.START_OF_DAY;
-    int startTimeForOptional = TimeRange.START_OF_DAY;
+    Collection<TimeRange> requiredAttendeesQuery = new ArrayList<>();
+    Collection<TimeRange> optionalAttendeesQuery = new ArrayList<>();
+    int requiredStartTime = TimeRange.START_OF_DAY;
+    int optionalStartTime = TimeRange.START_OF_DAY;
     for (Event event : eventsArray) {
       TimeRange eventTimeRange = event.getWhen();
       if (!Collections.disjoint(event.getAttendees(), requiredAttendees)) {
-        addTimeRangeToQuery(queryWithRequiredAttendees, startTimeForRequired, eventTimeRange.start(), request);
-        addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, eventTimeRange.start(), request);
+        addTimeRangeToQuery(requiredAttendeesQuery, requiredStartTime, 
+                eventTimeRange.start(), request);
+        addTimeRangeToQuery(optionalAttendeesQuery, optionalStartTime, 
+                eventTimeRange.start(), request);
         // Update the start time to point next possible time to hold the meeting
         int eventEndTime = eventTimeRange.end();
-        startTimeForRequired = eventEndTime > startTimeForRequired ? eventEndTime : startTimeForRequired;
-        startTimeForOptional = eventEndTime > startTimeForOptional ? eventEndTime : startTimeForOptional;
+        requiredStartTime = eventEndTime > requiredStartTime ? eventEndTime : requiredStartTime;
+        optionalStartTime = eventEndTime > optionalStartTime ? eventEndTime : optionalStartTime;
       } else if (!Collections.disjoint(event.getAttendees(), optionalAttendees)) {
-        addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, eventTimeRange.start(), request);
+        addTimeRangeToQuery(optionalAttendeesQuery, optionalStartTime, 
+                eventTimeRange.start(), request);
         int eventEndTime = eventTimeRange.end();
-        startTimeForOptional = eventEndTime > startTimeForOptional ? eventEndTime : startTimeForOptional;
+        optionalStartTime = eventEndTime > optionalStartTime ? eventEndTime : optionalStartTime;
       }
     }
     // Take care the END_OF_DAY to see if the meeting can be hold
-    addTimeRangeToQuery(queryWithRequiredAttendees, startTimeForRequired, TimeRange.END_OF_DAY + 1, request);
-    addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, TimeRange.END_OF_DAY + 1, request);
+    addTimeRangeToQuery(requiredAttendeesQuery, requiredStartTime, 
+            TimeRange.END_OF_DAY + 1, request);
+    addTimeRangeToQuery(optionalAttendeesQuery, optionalStartTime, 
+            TimeRange.END_OF_DAY + 1, request);
     
-    // Return the list that is not empty
-    return queryWithOptionalAttendees.isEmpty() ? queryWithRequiredAttendees : queryWithOptionalAttendees;
+    // Return the list when optional attendees can be attend if the list is not empty.
+    return optionalAttendeesQuery.isEmpty() ? requiredAttendeesQuery : optionalAttendeesQuery;
   }
 
   /**
