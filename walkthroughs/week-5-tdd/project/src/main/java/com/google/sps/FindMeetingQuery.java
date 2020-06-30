@@ -31,24 +31,46 @@ public final class FindMeetingQuery {
 
     // Find the collection of time range to hold the meeting
     Collection<String> requiredAttendees = request.getAttendees();
-    Collection<TimeRange> queries = new ArrayList<>();
-    int preStartTime = TimeRange.START_OF_DAY;
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+    // If there is no required attendees, then consider only the optinal attendees
+    requiredAttendees = requiredAttendees.isEmpty() ? optionalAttendees : requiredAttendees;
+
+    Collection<TimeRange> queryWithRequiredAttendees = new ArrayList<>();
+    Collection<TimeRange> queryWithOptionalAttendees = new ArrayList<>();
+    int startTimeForRequired = TimeRange.START_OF_DAY;
+    int startTimeForOptional = TimeRange.START_OF_DAY;
     for (Event event : eventsArray) {
       TimeRange eventTimeRange = event.getWhen();
       if (!Collections.disjoint(event.getAttendees(), requiredAttendees)) {
-        if (canRequestBeHold(preStartTime, eventTimeRange.start(), request)) {
-          queries.add(TimeRange.fromStartEnd(preStartTime, eventTimeRange.start(), false));
-        }
-        // Update the preStartTime to point next possible time to hold the meeting
+        addTimeRangeToQuery(queryWithRequiredAttendees, startTimeForRequired, eventTimeRange.start(), request);
+        addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, eventTimeRange.start(), request);
+        // Update the start time to point next possible time to hold the meeting
         int eventEndTime = eventTimeRange.end();
-        preStartTime = eventEndTime > preStartTime ? eventEndTime : preStartTime;
+        startTimeForRequired = eventEndTime > startTimeForRequired ? eventEndTime : startTimeForRequired;
+        startTimeForOptional = eventEndTime > startTimeForOptional ? eventEndTime : startTimeForOptional;
+      } else if (!Collections.disjoint(event.getAttendees(), optionalAttendees)) {
+        addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, eventTimeRange.start(), request);
+        int eventEndTime = eventTimeRange.end();
+        startTimeForOptional = eventEndTime > startTimeForOptional ? eventEndTime : startTimeForOptional;
       }
     }
     // Take care the END_OF_DAY to see if the meeting can be hold
-    if (canRequestBeHold(preStartTime, TimeRange.END_OF_DAY, request)) {
-      queries.add(TimeRange.fromStartEnd(preStartTime, TimeRange.END_OF_DAY, true));
+    addTimeRangeToQuery(queryWithRequiredAttendees, startTimeForRequired, TimeRange.END_OF_DAY + 1, request);
+    addTimeRangeToQuery(queryWithOptionalAttendees, startTimeForOptional, TimeRange.END_OF_DAY + 1, request);
+    
+    // Return the list that is not empty
+    return queryWithOptionalAttendees.isEmpty() ? queryWithRequiredAttendees : queryWithOptionalAttendees;
+  }
+
+  /**
+   * Adds the TimeRange to the query collection if the meeting can be hold during the startTime
+   * and the endTime.
+   * Note: The endTime will not be included in the TimeRange
+   */
+  private static void addTimeRangeToQuery(Collection<TimeRange> query, int startTime, int endTime, MeetingRequest request) {
+    if (canRequestBeHold(startTime, endTime, request)) {
+      query.add(TimeRange.fromStartEnd(startTime, endTime, false));
     }
-    return queries;
   }
   
   /**
