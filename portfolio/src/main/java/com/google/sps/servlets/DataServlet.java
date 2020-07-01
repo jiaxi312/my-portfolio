@@ -21,7 +21,6 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.cloud.vision.v1.EntityAnnotation;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -49,7 +48,8 @@ public class DataServlet extends HttpServlet {
     // Fetch the max number of comments
     response.setContentType("application/json");
     response.getWriter().println(
-            GSON.toJson(commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
+            ServletHelper.GSON.toJson(
+              commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
   }
 
   @Override
@@ -98,6 +98,5 @@ public class DataServlet extends HttpServlet {
   }
 
   private static final String ANONYMOUS = "Anonymous";
-  private static final Gson GSON = new Gson();
   private static final String DEFALUT_COMMENTS_TO_SHOW = "0";
 }

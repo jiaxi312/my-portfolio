@@ -19,6 +19,7 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.protobuf.ByteString;
 import com.google.api.gax.rpc.ApiException;
+import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -38,6 +39,8 @@ public final class ServletHelper {
                               = DatastoreServiceFactory.getDatastoreService();
   protected static final BlobstoreService DEFAULT_BLOBSTORE_SERVICE 
                               = BlobstoreServiceFactory.getBlobstoreService();
+  protected static final Gson GSON = new Gson();
+
 
   /**
    * @return the request parameter, or the default value if the parameter
