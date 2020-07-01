@@ -38,7 +38,7 @@ public final class FindMeetingQuery {
     requiredAttendees = requiredAttendees.isEmpty() ? optionalAttendees : requiredAttendees;
 
     Collection<TimeRange> queriesForRequiredAttendeesOnly = new ArrayList<>();
-    Collection<TimeRange> queriesWithOptionalAttendees = new ArrayList<>();
+    Collection<TimeRange> queriesIncludeOptionalAttendees = new ArrayList<>();
     int requiredStartTime = TimeRange.START_OF_DAY;
     int optionalStartTime = TimeRange.START_OF_DAY;
     for (Event event : eventsArray) {
@@ -46,14 +46,14 @@ public final class FindMeetingQuery {
       if (!Collections.disjoint(event.getAttendees(), requiredAttendees)) {
         tryAddTimeRange(queriesForRequiredAttendeesOnly, requiredStartTime, 
                 eventTimeRange.start(), request);
-        tryAddTimeRange(queriesWithOptionalAttendees, optionalStartTime, 
+        tryAddTimeRange(queriesIncludeOptionalAttendees, optionalStartTime, 
                 eventTimeRange.start(), request);
         // Update the start time to point next possible time to hold the meeting
         int eventEndTime = eventTimeRange.end();
         requiredStartTime = eventEndTime > requiredStartTime ? eventEndTime : requiredStartTime;
         optionalStartTime = eventEndTime > optionalStartTime ? eventEndTime : optionalStartTime;
       } else if (!Collections.disjoint(event.getAttendees(), optionalAttendees)) {
-        tryAddTimeRange(queriesWithOptionalAttendees, optionalStartTime, 
+        tryAddTimeRange(queriesIncludeOptionalAttendees, optionalStartTime, 
                 eventTimeRange.start(), request);
         int eventEndTime = eventTimeRange.end();
         optionalStartTime = eventEndTime > optionalStartTime ? eventEndTime : optionalStartTime;
@@ -62,12 +62,12 @@ public final class FindMeetingQuery {
     // Take care the END_OF_DAY to see if the meeting can be hold
     tryAddTimeRange(queriesForRequiredAttendeesOnly, requiredStartTime, 
             TimeRange.END_OF_DAY + 1, request);
-    tryAddTimeRange(queriesWithOptionalAttendees, optionalStartTime, 
+    tryAddTimeRange(queriesIncludeOptionalAttendees, optionalStartTime, 
             TimeRange.END_OF_DAY + 1, request);
     
     // Return the list when optional attendees can be attend if the list is not empty.
-    return queriesWithOptionalAttendees.isEmpty() ? 
-            queriesForRequiredAttendeesOnly : queriesWithOptionalAttendees;
+    return queriesIncludeOptionalAttendees.isEmpty() ? 
+            queriesForRequiredAttendeesOnly : queriesIncludeOptionalAttendees;
   }
 
   /**
