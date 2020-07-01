@@ -12,6 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+google.charts.load('current', {
+  'packages':['geochart'],
+  'mapsApiKey' : 'AIzaSyAzwDpM2F-wAKGlA5tmc_CSF_IZa2zrmJ8'
+});
+google.charts.setOnLoadCallback(drawChart);
+
+const DATA_MISSING = -1;
+
+/** Fetches the covid-19 data and uses it to create a geochart */
+function drawChart() {
+  fetch('/covid-19-data').then(response => response.json())
+  .then((covid19Data) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Country');
+    data.addColumn('number', 'Active Case')
+    // Add the data and the country name to the table
+    Object.keys(covid19Data).forEach((country) => {
+      if (covid19Data[country] != DATA_MISSING) {
+        data.addRow([country, covid19Data[country]]);
+      }
+    });
+    // Set the color of the chart
+    const options = {
+      colorAxis: {colors: ['white', 'orange', 'red', 'black']},
+      backgroundColor: 'skyblue',
+      forcelFrame: true,
+    };
+
+    const chart = new google.visualization.GeoChart(
+        document.getElementById('geochartDiv'));
+    chart.draw(data, options);
+  });
+}
+
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
