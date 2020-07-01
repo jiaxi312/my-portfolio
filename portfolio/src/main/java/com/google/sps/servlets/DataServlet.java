@@ -49,7 +49,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json");
     response.getWriter().println(
             ServletHelper.GSON.toJson(
-              commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
+                commentEntities.asList(FetchOptions.Builder.withLimit(maxComments))));
   }
 
   @Override

@@ -41,7 +41,7 @@ function drawChart() {
     };
 
     const chart = new google.visualization.GeoChart(
-      document.getElementById('geochartDiv'));
+        document.getElementById('geochartDiv'));
     chart.draw(data, options);
   });
 }

@@ -17,7 +17,9 @@ public class COVID19DataServlet extends HttpServlet {
   /** Reads the data from the local file */
   public void init() {
     Scanner scanner = new Scanner(getServletContext().getResourceAsStream(
-      "/WEB-INF/country_wise_latest.csv"));
+        "/WEB-INF/country_wise_latest.csv"));
+    
+    // Skip the first line
     scanner.nextLine();
     while (scanner.hasNextLine()) {
       String[] cells = scanner.nextLine().split(",");

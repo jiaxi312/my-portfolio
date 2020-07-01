@@ -36,9 +36,9 @@ public final class ServletHelper {
 
   /* The static store service that can be used to all the servlets */
   protected static final DatastoreService DEFAULT_DATASTORE_SERVICE
-                              = DatastoreServiceFactory.getDatastoreService();
+                            = DatastoreServiceFactory.getDatastoreService();
   protected static final BlobstoreService DEFAULT_BLOBSTORE_SERVICE 
-                              = BlobstoreServiceFactory.getBlobstoreService();
+                            = BlobstoreServiceFactory.getBlobstoreService();
   protected static final Gson GSON = new Gson();
 
 
