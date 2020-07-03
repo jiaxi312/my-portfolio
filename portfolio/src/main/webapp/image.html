@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <title>Pets Images</title>
     <link rel="stylesheet" href="style.css">
-    <script src = "script.js"></script>
+    <script src = "image_script.js"></script>
   </head>
-  <body>
+  <body onload="showImageWithCurrentIdx()">
     <div class="content" id="petsImage">
-      <h1>Pets Image</h1>
+      <h1></h1>
       <div id="image-thumbnails">
-      <a href="images/pets0.jpg"><img src="images/pets0.jpg"></a>
-      <a href="images/pets1.jpg"><img src="images/pets1.jpg"></a>
-      <a href="images/pets2.jpg"><img src="images/pets2.jpg"></a>
-      <a href="images/pets3.jpg"><img src="images/pets3.jpg"></a>
-      <a href="images/pets4.jpg"><img src="images/pets4.jpg"></a>
-      <a href="images/pets5.jpg"><img src="images/pets5.jpg"></a>
-      <a href="images/pets6.jpg"><img src="images/pets6.jpg"></a>
-      <a href="images/pets7.jpg"><img src="images/pets7.jpg"></a>
+      </div>
+      <div id="petsButtonContainer">
+        <button id="petsButton" onclick="showPrevImage()">Previous</button>
+        <button id="petsButton" onclick="showNextImage()">Next</button>
       </div>
     </div>
   </body>
