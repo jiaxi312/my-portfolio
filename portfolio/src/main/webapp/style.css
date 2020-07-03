@@ -183,3 +183,9 @@
 #image-thumbnails img:hover {
   border: thick solid black;
 }
+
+/* Change the position of the buttons in the image.html*/
+#petsButtonContainer {
+  position: absolute;
+  left: 25%;
+}
