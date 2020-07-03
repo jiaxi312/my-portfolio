@@ -20,8 +20,8 @@ function showNextImage() {
 /** Displays the image with the current index */
 function showImageWithCurrentIdx() {
   // Change the header to show the current index of the image being shown
-  const headerElement = document.getElementById('petsImage')
-                        .getElementsByTagName('h1')[0];
+  const headerElement = 
+          document.getElementById('petsImage').getElementsByTagName('h1')[0];
   headerElement.innerText = `Pets Image (${imageIdx + 1}/${numImages})`;
 
   // Create the img element and the link to the image
